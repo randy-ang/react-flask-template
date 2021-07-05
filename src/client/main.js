@@ -1,17 +1,36 @@
-import App from "../shared/App.svelte";
+import React from "react";
+import { hydrate, render } from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
+import { loadableReady } from "@loadable/component";
+import ReactApp from "@/shared/App";
 
-if ("serviceWorker" in navigator)
-  navigator.serviceWorker.register("/service-worker.js");
+if (SW_ENABLED) {
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then(function (registration) {
+        console.log("Service worker registration succeeded:", registration);
+      })
+      .catch(function (error) {
+        console.log("Service worker registration failed:", error);
+      });
+  } else {
+    console.log("Service workers are not supported.");
+  }
+}
 
-// because hydrate cannot be true, children of #app from ssr will not be replaced, instead only appended
-// current temp fix is to remove innerHtml & rerender on client
-// impact performance-wise, but at least can ssr now
-document.getElementById("app").innerHTML = "";
+function App() {
+  return (
+    <HelmetProvider>
+      <BrowserRouter>
+        <ReactApp />
+      </BrowserRouter>
+    </HelmetProvider>
+  );
+}
 
-const app = new App({
-  target: document.getElementById("app"),
-  // for some reason, when hydrate = true, cannot csr due to 'Cannot read property 'parentNode' of undefined' (Routes component by svelte-navigator)
-  // hydrate: true,
+loadableReady(() => {
+  const renderApp = window.__shell__ ? render : hydrate;
+  renderApp(<App />, document.querySelector("#app"));
 });
-
-export default app;

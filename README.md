@@ -1,9 +1,9 @@
-# SSR Svelte + Flask
+# SSR React + Flask
 
 What this example does:
 
 - An example of using Flask to:
-  - serve a SSR-capable Svelte app with lazy route and offline-capable support
+  - serve a SSR-capable React app with lazy route and offline-capable support
   - used as a backend server with basic error handling (404 returns as app and other exceptions returned as json)
 - Procfile is provided so Heroku deployment is straightforward
 - `yarn install` downloads all necessary js dependencies & python dependencies listed in requirements.txt (within a virtual env called vflask)
@@ -20,7 +20,8 @@ There are also still some TODOs:
 
 - create a separate script for webpack (or rollup) watch mode for easier dev development
 
-References: 
+References:
+
 - https://github.com/sveltejs/sapper
 - https://github.com/cabreraalex/svelte-flask-example
 - https://github.com/mefechoel/svelte-navigator/tree/main/example/ssr

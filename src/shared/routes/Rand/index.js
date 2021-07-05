@@ -1,11 +1,13 @@
 import { RAND_PATH } from "@url";
+import loadable from "@loadable/component";
 
-const RandPage = () =>
-  import(/* webpackChunkName: 'rand-view' */ "./Rand.svelte");
+const RandView = loadable(() =>
+  import(/* webpackChunkName: 'rand-view' */ "./RandView")
+);
 
 const RandRoute = {
   path: RAND_PATH,
-  component: RandPage,
+  component: RandView,
 };
 
 export default RandRoute;
