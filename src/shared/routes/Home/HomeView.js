@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet-async";
 
-export default function RandView() {
+export default function HomeView() {
   const [rand, setRand] = useState(0);
   const getRand = () => {
     fetch("/api/v1/rand")
@@ -10,7 +9,6 @@ export default function RandView() {
   };
   return (
     <>
-      <Helmet>Rand App</Helmet>
       <h1>Your number is {rand}!</h1>
       <button onClick={getRand}>Get a random number</button>
     </>

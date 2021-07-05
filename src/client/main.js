@@ -1,7 +1,6 @@
 import React from "react";
 import { hydrate, render } from "react-dom";
 import { BrowserRouter } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async";
 import { loadableReady } from "@loadable/component";
 import ReactApp from "@/shared/App";
 
@@ -22,11 +21,9 @@ if (SW_ENABLED) {
 
 function App() {
   return (
-    <HelmetProvider>
-      <BrowserRouter>
-        <ReactApp />
-      </BrowserRouter>
-    </HelmetProvider>
+    <BrowserRouter>
+      <ReactApp />
+    </BrowserRouter>
   );
 }
 

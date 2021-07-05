@@ -2,7 +2,6 @@ import React from "react";
 import { StaticRouter } from "react-router-dom";
 import App from "@/shared/App";
 import { renderWithData } from "react-ssr-prefetch/server";
-import { HelmetProvider } from "react-helmet-async";
 import { ChunkExtractor } from "@loadable/server";
 import { directory } from "../../../configs/project.config";
 import { generateHtmlData } from "./utils/generateHtml";
@@ -40,11 +39,9 @@ process.stdin.on("end", async function () {
 
   try {
     const app = (
-      <HelmetProvider context={helmetContext}>
-        <StaticRouter location={url} context={routerContext}>
-          <App />
-        </StaticRouter>
-      </HelmetProvider>
+      <StaticRouter location={url} context={routerContext}>
+        <App />
+      </StaticRouter>
     );
     const statsFile = directory.custom("dist", "loadable-stats.json");
     const chunkExtractor = new ChunkExtractor({
