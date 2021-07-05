@@ -36,7 +36,7 @@
     "react-ssr-prefetch": "^1.0.6"
   },
   "engines": {
-    "node": ">=10.x"
+    "node": "12.x"
   },
   "scripts": {
     "build": "yarn clean && webpack",
