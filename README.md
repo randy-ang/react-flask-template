@@ -6,7 +6,7 @@ What this example does:
   - serve a SSR-capable React app with lazy route and offline-capable support
   - used as a backend server with basic error handling (404 returns as app and other exceptions returned as json)
 - Procfile is provided so Heroku deployment is straightforward
-- `yarn install` downloads all necessary js dependencies & python dependencies listed in requirements.txt (within a virtual env called vflask)
+- `yarn install` downloads all necessary js dependencies
 - `yarn start` rebuild web app in production & run python server in dev (hot reload & debug log level)
 - `yarn serve` run python server
 - service worker is included
