@@ -1,7 +1,7 @@
 {
-  "name": "Svelte SSR Flask",
-  "short_name": "Svelte SSR Flask",
-  "description": "Svelte SSR Flask Example",
+  "name": "React SSR Flask",
+  "short_name": "React SSR Flask",
+  "description": "React SSR Flask Example",
   "theme_color": "#2196f3",
   "background_color": "#2196f3",
   "display": "standalone",

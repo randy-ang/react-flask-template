@@ -3,7 +3,7 @@ import os
 from flask import Flask, send_from_directory, render_template, request
 from werkzeug.exceptions import HTTPException, NotFound
 from src.server.api.v1.routes import api as api_routes
-from src.server.renderer import render_ssr
+from src.server.renderer import render_ssr, render_sw_html
 from src.server.utils.RegexConverter import RegexConverter
 from dotenv import load_dotenv
 
@@ -15,6 +15,11 @@ app = Flask(__name__, template_folder=template_dir)
 app.url_map.converters['regex'] = RegexConverter
 app.register_blueprint(api_routes, url_prefix='/api/v1')
 
+@app.route('/service-worker-index.html')
+def serve_sw_html() :
+    processed_sw = render_sw_html(request.path)
+    return render_template('index.html', **processed_sw)
+
 # Path for all the static files (compiled JS/CSS, etc.)
 @app.route('/<regex("(.*)\.(.+)"):filename>')
 def serve_static(filename):
@@ -22,13 +27,13 @@ def serve_static(filename):
 
 @app.route('/', defaults={'url': ''})
 @app.route('/<path:url>')
-def render_svelte_app(url):
+def render_react_app(url):
     processed_ssr = render_ssr(url)
     return render_template('index.html', **processed_ssr)
 
 @app.errorhandler(NotFound)
 def not_found_handler(err: NotFound):
-    return render_svelte_app(request.path), err.code
+    return render_react_app(request.path), err.code
 
 @app.errorhandler(HTTPException)
 def handle_exception(e: HTTPException):

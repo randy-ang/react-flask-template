@@ -4,11 +4,12 @@ const ASSETS = `cache${TIMESTAMP}`;
 // `files` is an array of everything in the `static` directory
 const assetsPath = "/assets.json";
 let to_cache = [];
-let staticAssets = new Set([]);
+let dynamicAssets = new Set([]);
+const staticAssets = ["/service-worker-index.html"];
 const routes = Object.values(ROUTES);
 
 async function getStaticAssetsList() {
-  if (!staticAssets.size) {
+  if (!dynamicAssets.size) {
     return fetch(assetsPath)
       .then((response) => response.json())
       .then((res) => {
@@ -16,9 +17,13 @@ async function getStaticAssetsList() {
           (allStaticFiles, staticFiles) => {
             const newStaticFiles = Object.values(staticFiles).reduce(
               (newStaticFiles, staticFile) => {
-                Array.isArray(staticFile)
-                  ? newStaticFiles.push(...staticFile)
-                  : newStaticFiles.push(staticFile);
+                if (Array.isArray(staticFile)) {
+                  newStaticFiles.push(
+                    ...staticFile.filter((path) => path.startsWith("/rand"))
+                  );
+                } else if (staticFile.startsWith("/rand")) {
+                  newStaticFiles.push(staticFile);
+                }
                 return newStaticFiles;
               },
               [...allStaticFiles]
@@ -26,11 +31,11 @@ async function getStaticAssetsList() {
 
             return newStaticFiles;
           },
-          []
+          staticAssets
         );
 
         to_cache = staticFiles;
-        staticAssets = new Set(staticFiles);
+        dynamicAssets = new Set(staticFiles);
         return to_cache;
       });
   }
@@ -41,7 +46,7 @@ async function getStaticAssetsList() {
 self.addEventListener("install", (event) => {
   event.waitUntil(
     Promise.all([getStaticAssetsList(), caches.open(ASSETS)])
-      .then(([staticAssets, cache]) => cache.addAll(staticAssets))
+      .then(([dynamicAssets, cache]) => cache.addAll(dynamicAssets))
       .then(() => {
         self.skipWaiting();
       })
@@ -66,7 +71,7 @@ self.addEventListener("activate", (event) => {
  * Fall back to the cache if the user is offline.
  */
 async function fetchAndCache(request) {
-  const cache = await caches.open(`offline${TIMESTAMP}`);
+  const cache = await caches.open(`offlinerand${TIMESTAMP}`);
 
   try {
     const response = await fetch(request);
@@ -91,7 +96,7 @@ self.addEventListener("fetch", (event) => {
   const isDevServerRequest =
     url.hostname === self.location.hostname && url.port !== self.location.port;
   const isStaticAsset =
-    url.host === self.location.host && staticAssets.has(url.pathname);
+    url.host === self.location.host && dynamicAssets.has(url.pathname);
   const skipBecauseUncached =
     event.request.cache === "only-if-cached" && !isStaticAsset;
   if (isHttp && !isDevServerRequest && !skipBecauseUncached) {
@@ -107,7 +112,7 @@ self.addEventListener("fetch", (event) => {
           !cachedAsset &&
           url.origin === self.origin &&
           routes.find((route) =>
-            new RegExp("^" + route + "$").test(url.pathname)
+            new RegExp("^" + route + "(/(.*))?" + "$").test(url.pathname)
           )
         ) {
           return caches.match("/service-worker-index.html");

@@ -1,4 +1,4 @@
-import RandRoute from "./Rand";
-const Routes = [RandRoute];
+import HomeRoute from "./Home";
+const Routes = [HomeRoute];
 
 export default Routes;
